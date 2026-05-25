@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Services\CalendarEventNormalizer;
-use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Validator;
@@ -47,6 +47,15 @@ class IcsRequest extends FormRequest
 
     protected function failedValidation(ValidatorContract $validator): void
     {
+        if (! $this->expectsJson()) {
+            throw new HttpResponseException(
+                redirect()
+                    ->to(route('home').'#calendar-form')
+                    ->withErrors($validator)
+                    ->withInput()
+            );
+        }
+
         throw new HttpResponseException(response()->json([
             'message' => 'The given data was invalid.',
             'errors' => $validator->errors(),
