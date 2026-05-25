@@ -1,58 +1,211 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Takt iCalendar Generator
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Takt er en enkel, stateless Laravel-applikasjon for å generere gyldige `.ics`-filer fra strukturert eventdata.
 
-## About Laravel
+Prosjektet er ikke et kalenderprodukt, bookingsystem eller kalenderintegrasjon. Det kobler seg ikke til Google Calendar, Outlook, Apple Calendar eller andre kalendertjenester. Det lagrer heller ikke events. Applikasjonen tar kun imot eventdata, validerer og normaliserer input, og returnerer en iCalendar-fil som kan lastes ned eller brukes videre av systemer og AI-agenter.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Hva prosjektet gjør
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Genererer `.ics` / iCalendar-filer.
+- Eksponerer en åpen URL-generator via `GET /create`.
+- Eksponerer et åpent JSON API via `POST /api/ics`.
+- Eksponerer MCP-tool `generate_ical_file` for AI-agenter.
+- Bruker samme validering, normalisering og generator for alle innganger.
+- Returnerer enten `.ics`-fil eller JSON med filinnhold.
+- Støtter vanlige eventfelter som tittel, start, slutt, sted, beskrivelse, URL, tidssone, alarm og heldagshendelser.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Hva prosjektet ikke gjør
 
-## Learning Laravel
+- Lagrer ikke events i database.
+- Har ikke sluttbrukerinnlogging for kalenderbrukere.
+- Ber ikke om OAuth-tilgang til kalenderkontoer.
+- Sender ikke e-post eller invitasjoner.
+- Håndterer ikke attendees, RSVP eller recurring events i MVP.
+- Har ikke list, update eller delete for events.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Støttede felt
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Obligatoriske felt:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- `title`
+- `start`
+- `end`
 
-## Agentic Development
+Valgfrie felt:
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- `description`
+- `location`
+- `url`
+- `timezone`
+- `alarm_minutes`
+- `all_day`
 
-```bash
-composer require laravel/boost --dev
+`alarm_minutes` må være en av:
 
-php artisan boost:install
+```txt
+0, 5, 10, 15, 30, 60, 1440
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+`url` må starte med `https://`.
 
-## Contributing
+Hvis `start` eller `end` sendes uten tidssone-offset, må `timezone` oppgis som gyldig IANA-tidssone, for eksempel `Europe/Oslo`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## HTTP-bruk
 
-## Code of Conduct
+### URL-generator
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```http
+GET /create?title=Demo%20Day&start=2026-06-03T12:00:00%2B02:00&end=2026-06-03T15:00:00%2B02:00&location=Kristiansand&alarm_minutes=30
+```
 
-## Security Vulnerabilities
+Responsen er en nedlastbar `.ics`-fil:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```txt
+Content-Type: text/calendar; charset=utf-8
+Content-Disposition: attachment; filename="demo-day.ics"
+```
 
-## License
+### JSON API
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```http
+POST /api/ics
+Content-Type: application/json
+```
+
+```json
+{
+  "title": "Demo Day",
+  "description": "Pitcher og nettverk",
+  "location": "Kristiansand",
+  "start": "2026-06-03T12:00:00+02:00",
+  "end": "2026-06-03T15:00:00+02:00",
+  "timezone": "Europe/Oslo",
+  "alarm_minutes": 30,
+  "url": "https://example.com/event"
+}
+```
+
+Som standard returnerer API-et en `.ics`-fil. Hvis klienten sender `Accept: application/json`, returneres JSON:
+
+```json
+{
+  "filename": "demo-day.ics",
+  "mime_type": "text/calendar; charset=utf-8",
+  "content": "BEGIN:VCALENDAR\r\nVERSION:2.0..."
+}
+```
+
+## MCP
+
+Prosjektet registrerer en MCP-server med tool:
+
+```txt
+generate_ical_file
+```
+
+Input bruker samme felt og validering som HTTP-endepunktene:
+
+```json
+{
+  "title": "Styremøte",
+  "description": "Gjennomgang av investeringer",
+  "location": "Kristiansand",
+  "start": "2026-06-12T14:00:00+02:00",
+  "end": "2026-06-12T16:00:00+02:00",
+  "timezone": "Europe/Oslo",
+  "alarm_minutes": 30
+}
+```
+
+Tool-responsen er strukturert JSON med:
+
+- `filename`
+- `mime_type`
+- `content`
+
+MCP-rutene er registrert i `routes/ai.php`.
+
+## Arkitektur
+
+Kjerneflyten er:
+
+```txt
+URL/API/MCP input
+-> validation
+-> normalization
+-> CalendarEventData
+-> IcsGenerator
+-> .ics or JSON response
+```
+
+Viktige filer:
+
+- `app/Data/CalendarEventData.php`
+- `app/Services/CalendarEventNormalizer.php`
+- `app/Services/IcsGenerator.php`
+- `app/Http/Controllers/IcsController.php`
+- `app/Http/Requests/IcsRequest.php`
+- `app/Mcp/Servers/CalendarServer.php`
+- `app/Mcp/Tools/GenerateIcalFileTool.php`
+- `routes/web.php`
+- `routes/api.php`
+- `routes/ai.php`
+
+## Lokal utvikling
+
+Installer avhengigheter:
+
+```bash
+composer install
+npm install
+```
+
+Sett opp miljøfil og app key:
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Kjør migreringer hvis databasen skal initialiseres:
+
+```bash
+php artisan migrate --no-interaction
+```
+
+Start utviklingsmiljøet:
+
+```bash
+composer run dev
+```
+
+Alternativt kan Laravel-serveren startes direkte:
+
+```bash
+php artisan serve
+```
+
+## Testing og kvalitet
+
+Kjør testene:
+
+```bash
+php artisan test --compact
+```
+
+Kjør formattering:
+
+```bash
+vendor/bin/pint --dirty --format agent
+```
+
+Testdekningen inkluderer:
+
+- `GET /create` happy path og validering.
+- `POST /api/ics` `.ics`-respons og JSON-respons.
+- iCalendar escaping, line folding, UID, filnavn og alarmblokk.
+- MCP-tool med gyldig og ugyldig input.
+
+## Lisens
+
+Prosjektet er basert på Laravel og følger lisensen definert i prosjektets Composer-konfigurasjon.
