@@ -1,13 +1,14 @@
-@php
-    $navItems = __('public.docs.nav');
-@endphp
-
 @props([
     'docsLinkExample',
     'docsApiCalendarExample',
     'docsApiJsonExample',
+    'docsMcpDetails',
     'docsExamples',
 ])
+
+@php
+    $navItems = __('public.docs.nav');
+@endphp
 
 <div class="bg-surface">
     <div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:px-8">
@@ -105,7 +106,7 @@
                         <div class="overflow-x-auto border border-line">
                             <table class="min-w-full divide-y divide-line text-left text-sm">
                                 <tbody class="divide-y divide-line text-muted">
-                                    @foreach (__('public.docs.mcp_details') as $detail)
+                                    @foreach ($docsMcpDetails as $detail)
                                         <tr>
                                             <th class="w-40 px-4 py-3 font-semibold text-ink">{{ $detail['label'] }}</th>
                                             <td class="px-4 py-3 font-mono text-code-muted">{{ $detail['value'] }}</td>

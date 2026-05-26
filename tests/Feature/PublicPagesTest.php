@@ -19,7 +19,7 @@ it('renders the docs page', function () {
         ->assertDontSee('https://example.com/create')
         ->assertSeeText(__('public.docs.sections.mcp.title'))
         ->assertSeeText('generate_ical_file')
-        ->assertSeeText('/mcp/calendar')
+        ->assertSeeText('https://takt.test/mcp/calendar')
         ->assertSeeText('takt-calendar');
 });
 

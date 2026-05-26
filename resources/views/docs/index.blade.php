@@ -6,6 +6,7 @@
         :docs-link-example="$docsLinkExample"
         :docs-api-calendar-example="$docsApiCalendarExample"
         :docs-api-json-example="$docsApiJsonExample"
+        :docs-mcp-details="$docsMcpDetails"
         :docs-examples="$docsExamples"
     />
 </x-layouts.public>

@@ -20,6 +20,7 @@ class PublicPageController extends Controller
             ]),
             'docsApiCalendarExample' => $this->apiCurlExample($baseUrl, 'text/calendar'),
             'docsApiJsonExample' => $this->apiCurlExample($baseUrl, 'application/json')."\n\n".__('public.docs.sections.api.json_response'),
+            'docsMcpDetails' => $this->mcpDetails($baseUrl),
             'docsExamples' => [
                 [
                     'title' => __('public.docs.examples.simple.title'),
@@ -79,5 +80,16 @@ class PublicPageController extends Controller
             ."  -H 'Content-Type: application/json' \\\n"
             ."  -H 'Accept: {$acceptHeader}' \\\n"
             ."  -d '{\"title\":\"Planning Session\",\"start\":\"2026-06-01T10:00:00+02:00\",\"end\":\"2026-06-01T11:00:00+02:00\",\"timezone\":\"Europe/Oslo\"}'";
+    }
+
+    /**
+     * @return array<int, array{label: string, value: string}>
+     */
+    protected function mcpDetails(string $baseUrl): array
+    {
+        $details = __('public.docs.mcp_details');
+        $details[0]['value'] = "{$baseUrl}/mcp/calendar";
+
+        return $details;
     }
 }
