@@ -14,7 +14,8 @@ it('renders the docs page', function () {
         ->assertSeeText('POST /api/ics')
         ->assertSeeText(__('public.docs.sections.mcp.title'))
         ->assertSeeText('generate_ical_file')
-        ->assertSeeText('/mcp/calendar');
+        ->assertSeeText('/mcp/calendar')
+        ->assertSeeText('takt-calendar');
 });
 
 it('renders the privacy page', function () {

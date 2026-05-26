@@ -137,10 +137,10 @@ return [
             ],
             'mcp' => [
                 'title' => 'MCP',
-                'body' => 'Takt registers an MCP server for clients that can call tools directly.',
+                'body' => 'Takt registers an MCP server for clients that can call tools directly. Claude Code should use the project-scoped stdio server named takt-calendar from .mcp.json.',
                 'example_title' => 'Tool input',
                 'example' => "{\n  \"title\": \"Tool Session\",\n  \"start\": \"2026-06-01T10:00:00+02:00\",\n  \"end\": \"2026-06-01T11:00:00+02:00\",\n  \"timezone\": \"Europe/Oslo\"\n}",
-                'notice' => 'The MCP tool returns structured content with filename, mime_type, and content.',
+                'notice' => 'In Claude Code, restart the session or run /mcp after changing .mcp.json, approve the project server if prompted, and verify that takt-calendar exposes the generate_ical_file tool.',
             ],
             'examples' => [
                 'title' => 'Examples',
@@ -219,6 +219,10 @@ return [
             [
                 'label' => 'Output',
                 'value' => 'filename, mime_type, content',
+            ],
+            [
+                'label' => 'Claude Code',
+                'value' => 'takt-calendar in .mcp.json',
             ],
         ],
         'examples' => [
