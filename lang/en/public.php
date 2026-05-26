@@ -124,16 +124,14 @@ return [
             'link' => [
                 'title' => 'Use with a link',
                 'body' => 'Any extra route parameters passed to the named create route are encoded as query parameters.',
-                'example' => 'https://example.com/create?title=Demo+Day&start=2026-06-10T09:00&end=2026-06-10T12:00&timezone=Europe%2FOslo',
             ],
             'api' => [
                 'title' => 'API',
                 'body' => 'Send the same event fields to POST /api/ics. By default, the endpoint returns a downloadable text/calendar response.',
                 'notice' => 'Use Accept: application/json when you want filename, MIME type, and calendar content in a JSON object instead of a file response.',
                 'calendar_response_title' => 'Calendar file response',
-                'calendar_example' => "curl -X POST https://example.com/api/ics \\\n  -H 'Content-Type: application/json' \\\n  -H 'Accept: text/calendar' \\\n  -d '{\"title\":\"Planning Session\",\"start\":\"2026-06-01T10:00:00+02:00\",\"end\":\"2026-06-01T11:00:00+02:00\",\"timezone\":\"Europe/Oslo\"}'",
                 'json_response_title' => 'JSON response',
-                'json_example' => "curl -X POST https://example.com/api/ics \\\n  -H 'Content-Type: application/json' \\\n  -H 'Accept: application/json' \\\n  -d '{\"title\":\"Planning Session\",\"start\":\"2026-06-01T10:00:00+02:00\",\"end\":\"2026-06-01T11:00:00+02:00\",\"timezone\":\"Europe/Oslo\"}'\n\n{\n  \"filename\": \"planning-session.ics\",\n  \"mime_type\": \"text/calendar; charset=utf-8\",\n  \"content\": \"BEGIN:VCALENDAR...\"\n}",
+                'json_response' => "{\n  \"filename\": \"planning-session.ics\",\n  \"mime_type\": \"text/calendar; charset=utf-8\",\n  \"content\": \"BEGIN:VCALENDAR...\"\n}",
             ],
             'mcp' => [
                 'title' => 'MCP',
@@ -226,21 +224,17 @@ return [
             ],
         ],
         'examples' => [
-            [
+            'simple' => [
                 'title' => 'Simple event',
-                'code' => 'https://example.com/create?title=Planning+Session&start=2026-06-01T10:00&end=2026-06-01T11:00&timezone=Europe%2FOslo',
             ],
-            [
+            'location' => [
                 'title' => 'Event with location and description',
-                'code' => 'https://example.com/create?title=Workshop&start=2026-06-02T09:00&end=2026-06-02T12:00&timezone=Europe%2FOslo&location=Oslo&description=Bring+laptop',
             ],
-            [
+            'all_day' => [
                 'title' => 'All-day event',
-                'code' => 'https://example.com/create?title=Conference+Day&start=2026-06-03&end=2026-06-03&timezone=UTC&all_day=1',
             ],
-            [
+            'external_link' => [
                 'title' => 'Event with external link',
-                'code' => 'https://example.com/create?title=Webinar&start=2026-06-04T13:00&end=2026-06-04T14:00&timezone=Europe%2FOslo&url=https%3A%2F%2Fexample.com%2Fwebinar',
             ],
         ],
         'privacy_points' => [

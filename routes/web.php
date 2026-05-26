@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\IcsController;
+use App\Http\Controllers\PublicPageController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')
     ->name('home');
 
-Route::view('/docs', 'docs.index')
+Route::get('/docs', [PublicPageController::class, 'docs'])
     ->name('docs');
 
 Route::view('/privacy', 'privacy')

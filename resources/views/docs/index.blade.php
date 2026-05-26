@@ -2,5 +2,10 @@
     :title="__('public.meta.docs_title')"
     :description="__('public.meta.docs_description')"
 >
-    <x-pages.docs />
+    <x-pages.docs
+        :docs-link-example="$docsLinkExample"
+        :docs-api-calendar-example="$docsApiCalendarExample"
+        :docs-api-json-example="$docsApiJsonExample"
+        :docs-examples="$docsExamples"
+    />
 </x-layouts.public>

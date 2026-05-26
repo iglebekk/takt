@@ -7,11 +7,16 @@ it('renders the home page', function () {
 });
 
 it('renders the docs page', function () {
+    config(['app.url' => 'https://takt.test']);
+
     $this->get(route('docs'))
         ->assertOk()
         ->assertSeeText(__('public.docs.title'))
         ->assertSeeText(__('public.docs.sections.api.title'))
         ->assertSeeText('POST /api/ics')
+        ->assertSeeText('https://takt.test/create?title=Demo%20Day')
+        ->assertSeeText('curl -X POST https://takt.test/api/ics')
+        ->assertDontSee('https://example.com/create')
         ->assertSeeText(__('public.docs.sections.mcp.title'))
         ->assertSeeText('generate_ical_file')
         ->assertSeeText('/mcp/calendar')

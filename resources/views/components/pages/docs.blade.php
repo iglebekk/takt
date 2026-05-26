@@ -2,6 +2,13 @@
     $navItems = __('public.docs.nav');
 @endphp
 
+@props([
+    'docsLinkExample',
+    'docsApiCalendarExample',
+    'docsApiJsonExample',
+    'docsExamples',
+])
+
 <div class="bg-surface">
     <div class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:px-8">
         <aside class="hidden lg:block">
@@ -66,7 +73,7 @@
                     :title="__('public.docs.sections.link.title')"
                     :intro="__('public.docs.sections.link.body')"
                 >
-                    <x-app.code-block :code="__('public.docs.sections.link.example')" />
+                    <x-app.code-block :code="$docsLinkExample" />
                 </x-app.section>
 
                 <x-app.section
@@ -79,12 +86,12 @@
 
                         <div class="grid gap-3">
                             <h3 class="text-lg font-semibold text-ink">{{ __('public.docs.sections.api.calendar_response_title') }}</h3>
-                            <x-app.code-block :code="__('public.docs.sections.api.calendar_example')" />
+                            <x-app.code-block :code="$docsApiCalendarExample" />
                         </div>
 
                         <div class="grid gap-3">
                             <h3 class="text-lg font-semibold text-ink">{{ __('public.docs.sections.api.json_response_title') }}</h3>
-                            <x-app.code-block :code="__('public.docs.sections.api.json_example')" />
+                            <x-app.code-block :code="$docsApiJsonExample" />
                         </div>
                     </div>
                 </x-app.section>
@@ -123,7 +130,7 @@
                     :intro="__('public.docs.sections.examples.body')"
                 >
                     <div class="grid gap-6">
-                        @foreach (__('public.docs.examples') as $example)
+                        @foreach ($docsExamples as $example)
                             <div class="grid gap-3">
                                 <h3 class="text-lg font-semibold text-ink">{{ $example['title'] }}</h3>
                                 <x-app.code-block :code="$example['code']" />
